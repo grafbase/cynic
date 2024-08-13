@@ -318,7 +318,7 @@ impl<'a> Pretty<'a, Allocator<'a>> for NodeDisplay<UnionDefinition<'a>> {
             );
         }
 
-        let mut members = self.0.members().peekable();
+        let mut members = self.0.members().map(|member| member.name()).peekable();
 
         if members.peek().is_some() {
             let members = allocator

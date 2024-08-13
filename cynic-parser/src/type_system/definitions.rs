@@ -36,6 +36,16 @@ pub enum Definition<'a> {
     Directive(DirectiveDefinition<'a>),
 }
 
+impl Definition<'_> {
+    pub fn span(&self) -> crate::Span {
+        match self {
+            Definition::Schema(def) | Definition::SchemaExtension(def) => def.span(),
+            Definition::Type(ty) | Definition::TypeExtension(ty) => ty.span(),
+            Definition::Directive(def) => def.span(),
+        }
+    }
+}
+
 #[derive(Clone, Copy)]
 pub enum TypeDefinition<'a> {
     Scalar(ScalarDefinition<'a>),
@@ -123,6 +133,17 @@ impl<'a> From<ReadContext<'a, DefinitionId>> for Definition<'a> {
                 Definition::TypeExtension(TypeDefinition::InputObject(document.read(*id)))
             }
             DefinitionRecord::Directive(id) => Definition::Directive(document.read(*id)),
+        }
+    }
+
+    pub fn span(&self) -> crate::Span {
+        match self {
+            TypeDefinition::Scalar(inner) => inner.span(),
+            TypeDefinition::Object(inner) => inner.span(),
+            TypeDefinition::Interface(inner) => inner.span(),
+            TypeDefinition::Union(inner) => inner.span(),
+            TypeDefinition::Enum(inner) => inner.span(),
+            TypeDefinition::InputObject(inner) => inner.span(),
         }
     }
 }

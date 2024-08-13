@@ -11,6 +11,7 @@ pub struct TypeSystemAstWriter {
     enum_value_id_cursor: EnumValueDefinitionId,
     directive_id_cursor: DirectiveId,
     argument_id_cursor: ArgumentId,
+    union_member_id_cursor: UnionMemberId,
 }
 
 // TODO: Don't forget the spans etc.
@@ -23,6 +24,7 @@ impl TypeSystemAstWriter {
             enum_value_id_cursor: EnumValueDefinitionId::new(0),
             directive_id_cursor: DirectiveId::new(0),
             argument_id_cursor: ArgumentId::new(0),
+            union_member_id_cursor: UnionMemberId::new(0),
         }
     }
 
@@ -33,6 +35,7 @@ impl TypeSystemAstWriter {
             directive_id_cursor: DirectiveId::new(ast.directives.len()),
             enum_value_id_cursor: EnumValueDefinitionId::new(ast.enum_value_definitions.len()),
             argument_id_cursor: ArgumentId::new(ast.arguments.len()),
+            union_member_id_cursor: UnionMemberId::new(ast.union_members.len()),
             ast,
         }
     }
@@ -303,6 +306,23 @@ impl TypeSystemAstWriter {
             .push(DefinitionRecord::InterfaceExtension(id));
 
         definition_id
+    }
+
+    pub fn union_member(&mut self, member: UnionMemberRecord) -> UnionMemberId {
+        let id = UnionMemberId::new(self.ast.union_members.len());
+        self.ast.union_members.push(member);
+        id
+    }
+
+    pub fn union_member_range(&mut self, expected_count: Option<usize>) -> IdRange<UnionMemberId> {
+        let start = self.union_member_id_cursor;
+        let end = UnionMemberId::new(self.ast.union_members.len());
+        self.union_member_id_cursor = end;
+        let range = IdRange::new(start, end);
+
+        assert_eq!(range.len(), expected_count.unwrap_or_default());
+
+        range
     }
 
     pub fn union_extension(&mut self, definition: UnionDefinitionRecord) -> DefinitionId {

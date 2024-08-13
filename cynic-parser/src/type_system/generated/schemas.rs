@@ -12,6 +12,7 @@ pub struct SchemaDefinitionRecord {
     pub description: Option<StringLiteralId>,
     pub directives: IdRange<DirectiveId>,
     pub root_operations: IdRange<RootOperationTypeDefinitionId>,
+    pub span: Span,
 }
 
 #[derive(Clone, Copy)]
@@ -33,6 +34,10 @@ impl<'a> SchemaDefinition<'a> {
         let document = self.0.document;
         super::Iter::new(document.lookup(self.0.id).root_operations, document)
     }
+    pub fn span(&self) -> Span {
+        let document = self.0.document;
+        document.lookup(self.0.id).span
+    }
 }
 
 impl SchemaDefinition<'_> {
@@ -47,6 +52,7 @@ impl fmt::Debug for SchemaDefinition<'_> {
             .field("description", &self.description())
             .field("directives", &self.directives())
             .field("root_operations", &self.root_operations())
+            .field("span", &self.span())
             .finish()
     }
 }
@@ -68,6 +74,7 @@ impl<'a> From<ReadContext<'a, SchemaDefinitionId>> for SchemaDefinition<'a> {
 pub struct RootOperationTypeDefinitionRecord {
     pub operation_type: OperationType,
     pub named_type: StringId,
+    pub span: Span,
 }
 
 #[derive(Clone, Copy)]
@@ -84,6 +91,10 @@ impl<'a> RootOperationTypeDefinition<'a> {
         let document = &self.0.document;
         document.lookup(document.lookup(self.0.id).named_type)
     }
+    pub fn span(&self) -> Span {
+        let document = self.0.document;
+        document.lookup(self.0.id).span
+    }
 }
 
 impl RootOperationTypeDefinition<'_> {
@@ -97,6 +108,7 @@ impl fmt::Debug for RootOperationTypeDefinition<'_> {
         f.debug_struct("RootOperationTypeDefinition")
             .field("operation_type", &self.operation_type())
             .field("named_type", &self.named_type())
+            .field("span", &self.span())
             .finish()
     }
 }

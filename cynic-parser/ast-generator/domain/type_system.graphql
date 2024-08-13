@@ -2,11 +2,13 @@ type SchemaDefinition @file(name: "schemas") {
   description: StringLiteral
   directives: [Directive!]!
   root_operations: [RootOperationTypeDefinition!]!
+  span: Span!
 }
 
 type RootOperationTypeDefinition @file(name: "schemas") {
   operation_type: OperationType!
   named_type: String!
+  span: Span!
 }
 
 type ScalarDefinition @file(name: "scalars") {
@@ -46,8 +48,13 @@ type InterfaceDefinition @file(name: "interfaces") {
 type UnionDefinition @file(name: "unions") {
   name: String!
   description: StringLiteral
-  members: [String]
+  members: [UnionMember!]
   directives: [Directive!]!
+  span: Span!
+}
+
+type UnionMember @file(name: "unions") {
+  name: String!
   span: Span!
 }
 
@@ -79,6 +86,7 @@ type InputValueDefinition @file(name: "input_values") {
   ty: Type!
   description: StringLiteral
   default_value: Value
+  default_value_span: Span!
   directives: [Directive!]!
   span: Span!
 }
