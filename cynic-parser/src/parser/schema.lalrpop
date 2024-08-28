@@ -405,7 +405,7 @@ Arguments: Vec<ArgumentId> = {
 }
 
 Argument: ArgumentId = {
-    <name:Name> ":" <value:Value> => ast.argument(ArgumentRecord { <> }),
+    <start:@L> <name:Name> ":" <value:Value> <end:@R> => ast.argument(ArgumentRecord { name, value, span: Span::new(start, end) }),
 }
 
 Ident: &'input str = {
